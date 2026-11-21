@@ -57,7 +57,13 @@ export async function ingestTed(queries: TedQuery[], terms: Term[], cpvRules: Cp
         seen++;
         const pub = pick(n["publication-number"]);
         if (!pub) continue;
-        const title = pick(n["notice-title"]) ?? "";
+        // Només anuncis de licitació (cn-*) i anuncis previs (pin-*); fora adjudicacions i modificacions
+        if (!/^(cn|pin)/.test(pick(n["notice-type"]) ?? "")) continue;
+        // El títol de TED ve com "País – descripció del CPV – títol real": ens quedem amb el títol real,
+        // si no, la descripció del CPV dispara falsos positius del diccionari
+        const rawTitle = pick(n["notice-title"]) ?? "";
+        const parts = rawTitle.split(" – ");
+        const title = parts.length >= 3 ? parts.slice(2).join(" – ") : rawTitle;
         const cpv = [...new Set(list(n["classification-cpv"]))];
         const m = classify(title, cpv, terms, cpvRules);
         const score = Math.max(m?.score ?? 0, q.base_score);

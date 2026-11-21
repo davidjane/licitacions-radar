@@ -10,7 +10,15 @@ async function config<T>(key: string): Promise<T | null> {
   return (data?.value as T) ?? null;
 }
 
+// Autenticació pròpia: capçalera x-lic-secret contra el secret guardat al Vault (verify_jwt desactivat)
+let secret: string | null = null;
+async function authorized(req: Request): Promise<boolean> {
+  if (!secret) secret = ((await db.rpc("lic_cron_secret")).data as string) ?? null;
+  return Boolean(secret) && req.headers.get("x-lic-secret") === secret;
+}
+
 Deno.serve(async (req) => {
+  if (!(await authorized(req))) return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
   const { source = "ted", max_pages } = await req.json().catch(() => ({}));
   const { data: run } = await db.from("lic_ingest_runs").insert({ source }).select("id").single();
   const finish = (patch: Record<string, unknown>) =>

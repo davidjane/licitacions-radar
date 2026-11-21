@@ -5,14 +5,14 @@ Sistema propi de Volcanic per detectar licitacions públiques rellevants a Espan
 
 ## Estat
 
-Prototip de la capa 1 (ingesta + filtre per termes i CPV). **Encara no desplegat ni provat contra les fonts reals.**
+Prototip de la capa 1 (ingesta + filtre per termes i CPV). Desplegat a Supabase (projecte `licitacions-radar`) i validat contra les fonts reals el 21/11/2026.
 
 ## Fonts
 
 | Font | Accés | Estat |
 |---|---|---|
-| PLACSP (perfils, agregades, contractes menors) | Feeds ATOM / CODICE | Codi escrit, URL per verificar |
-| TED | Search API v3 (anònima) | Codi escrit, sintaxi de consulta per verificar |
+| PLACSP (perfils, agregades, contractes menors) | Feeds ATOM / CODICE | Funciona (3 feeds) |
+| TED | Search API v3 (anònima) | Funciona; cerca de marques a text complet per validar |
 | PSCP (Catalunya) | API Socrata | Pendent |
 
 ## Estructura
